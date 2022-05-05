@@ -1,0 +1,27 @@
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+
+# general
+target/
+node_modules/
+contracts/*/src/packages
+contracts/*/target
+artifacts/
+contracts/*/artifacts
+.DS_Store
+
+# This repo specific
+keys.terrain.js
+keys.json
+config.json
+code_id.json
+contract_address.json
+
+# VSCode related
+launch.json

@@ -1,0 +1,14 @@
+{
+  "name": "moats-protocol",
+  "version": "0.0.1",
+  "description": "",
+  "dependencies": {
+    "@terra-money/terrain": "0.2.0",
+    "terrajs": "file:terrajs"
+  },
+  "workspaces": [
+    "frontend"
+  ],
+  "author": "",
+  "license": "ISC"
+}
