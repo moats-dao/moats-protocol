@@ -31,7 +31,12 @@ instantiate = MsgInstantiateContract(
     sender=test1.key.acc_address,
     admin=test1.key.acc_address,
     code_id=int(code_id),
-    init_msg={ "admin": test1.key.acc_address },    # InitMsg
+    init_msg={
+        "admin": test1.key.acc_address,
+        "anc_liq_que_contract": "terra18j0wd0f62afcugw2rx5y8e6j5qjxd7d6qsc87r",
+        "bluna_contract": "terra1u0t35drzyy0mujj8rkdyzhe264uls4ug3wdp3x",
+        "astroport_router": "terra13wf295fj9u209nknz2cgqmmna7ry3d3j5kv7t4",
+    },    # InitMsg
     init_coins={}  # init coins
     #{"uluna": 1000000, "uusd": 1000000}  # init coins
 )

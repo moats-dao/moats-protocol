@@ -11,6 +11,9 @@ pub const HOOKS: Hooks = Hooks::new("hooks");
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct State {
     pub owner: Addr,
+    pub anc_liq_que_contract: Addr,
+    pub bluna_contract: Addr,
+    pub astroport_router: Addr,
 }
 
 pub const STATE: Item<State> = Item::new("state");

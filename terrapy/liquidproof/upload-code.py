@@ -26,7 +26,7 @@ test1 = terra.wallet(MnemonicKey(mnemonic=walletMnemonics["mango_validator"]['mn
 contract_file = open("./artifacts/liquidproof.wasm", "rb")
 file_bytes = base64.b64encode(contract_file.read()).decode()
 store_code = MsgStoreCode(test1.key.acc_address, file_bytes)
-store_code_tx = test1.create_and_sign_tx(CreateTxOptions(msgs=[store_code], fee=Fee(2100000, "60000uluna")))
+store_code_tx = test1.create_and_sign_tx(CreateTxOptions(msgs=[store_code], fee=Fee(3100000, "60000uluna")))
 store_code_tx_result = terra.tx.broadcast(store_code_tx)
 print(store_code_tx_result)
 

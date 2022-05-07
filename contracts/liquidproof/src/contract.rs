@@ -25,8 +25,15 @@ pub fn instantiate(
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
+    let safe_anc_liq_que_contract = deps.api.addr_validate(msg.anc_liq_que_contract.as_str())?;
+    let safe_bluna_contract = deps.api.addr_validate(msg.bluna_contract.as_str())?;
+    let safe_astroport_router = deps.api.addr_validate(msg.astroport_router.as_str())?;
+
     let state = State {
         owner: info.sender.clone(),
+        anc_liq_que_contract: safe_anc_liq_que_contract,
+        bluna_contract: safe_bluna_contract,
+        astroport_router: safe_astroport_router,
     };
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     STATE.save(deps.storage, &state)?;
@@ -72,8 +79,8 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::GetOwner {} => to_binary(&query_owner(deps)?),
         QueryMsg::GetAdmin {} =>  to_binary(&query_admin(deps)?),
-        //QueryMsg::GetUSTBalance{} => to_binary(&query_balance(deps, _env.contract.address, "uusd".to_string())?),
-        QueryMsg::GetUSTBalance { account_addr } => to_binary(&query_balance(deps, account_addr, "uusd".to_string())?),
+        //QueryMsg::GetUstBalance{} => to_binary(&query_balance(deps, _env.contract.address, "uusd".to_string())?),
+        QueryMsg::GetUstBalance { account_addr } => to_binary(&query_balance(deps, account_addr, "uusd".to_string())?),
     }
 }
 

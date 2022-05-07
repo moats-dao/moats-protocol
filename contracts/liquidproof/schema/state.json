@@ -3,9 +3,21 @@
   "title": "State",
   "type": "object",
   "required": [
+    "anc_liq_que_contract",
+    "astroport_router",
+    "bluna_contract",
     "owner"
   ],
   "properties": {
+    "anc_liq_que_contract": {
+      "$ref": "#/definitions/Addr"
+    },
+    "astroport_router": {
+      "$ref": "#/definitions/Addr"
+    },
+    "bluna_contract": {
+      "$ref": "#/definitions/Addr"
+    },
     "owner": {
       "$ref": "#/definitions/Addr"
     }

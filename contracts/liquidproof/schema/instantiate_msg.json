@@ -3,10 +3,22 @@
   "title": "InstantiateMsg",
   "type": "object",
   "required": [
-    "admin"
+    "admin",
+    "anc_liq_que_contract",
+    "astroport_router",
+    "bluna_contract"
   ],
   "properties": {
     "admin": {
+      "type": "string"
+    },
+    "anc_liq_que_contract": {
+      "type": "string"
+    },
+    "astroport_router": {
+      "type": "string"
+    },
+    "bluna_contract": {
       "type": "string"
     }
   }
