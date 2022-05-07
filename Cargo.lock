@@ -159,6 +159,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "cw-controllers"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ff50deaba22e0a37d6542ef4e4141e2cbe8f63dd9de23655762841f38517542e"
+dependencies = [
+ "cosmwasm-std",
+ "cw-storage-plus",
+ "cw0",
+ "schemars",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
 name = "cw-storage-plus"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -167,6 +181,18 @@ dependencies = [
  "cosmwasm-std",
  "schemars",
  "serde",
+]
+
+[[package]]
+name = "cw0"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c497f885a40918a02df7d938c81809965fa05cfc21b3dc591e9950237b5de0a9"
+dependencies = [
+ "cosmwasm-std",
+ "schemars",
+ "serde",
+ "thiserror",
 ]
 
 [[package]]
@@ -179,6 +205,52 @@ dependencies = [
  "cw-storage-plus",
  "schemars",
  "serde",
+]
+
+[[package]]
+name = "cw20"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a11a2adbd52258f5b4ed5323f62bc6e559f2cefbe52ef0e58290016fde5bb083"
+dependencies = [
+ "cosmwasm-std",
+ "cw0",
+ "schemars",
+ "serde",
+]
+
+[[package]]
+name = "cw20-base"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fe3791e0f6b4a0a82b86541d48dcc67c2d607da8e5691a91b40b2c06ddf09c52"
+dependencies = [
+ "cosmwasm-std",
+ "cw-storage-plus",
+ "cw0",
+ "cw2",
+ "cw20",
+ "schemars",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
+name = "cw20-legacy"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d27b11827323369993519abb494f3ae9b6aac4d716d058bea5e181b9b0074b7"
+dependencies = [
+ "cosmwasm-std",
+ "cosmwasm-storage",
+ "cw-storage-plus",
+ "cw0",
+ "cw2",
+ "cw20",
+ "cw20-base",
+ "schemars",
+ "serde",
+ "thiserror",
 ]
 
 [[package]]
@@ -353,8 +425,27 @@ dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
  "cosmwasm-storage",
+ "cw-controllers",
  "cw-storage-plus",
+ "cw0",
  "cw2",
+ "schemars",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
+name = "moats_token"
+version = "0.0.0"
+dependencies = [
+ "cosmwasm-schema",
+ "cosmwasm-std",
+ "cosmwasm-storage",
+ "cw-storage-plus",
+ "cw0",
+ "cw2",
+ "cw20",
+ "cw20-legacy",
  "schemars",
  "serde",
  "thiserror",

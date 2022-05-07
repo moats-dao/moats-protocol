@@ -29,12 +29,16 @@ cargo build
 
 ### Backend (Terra.js)
 
+* keys.terrain.js file needed
+
 * Shell commands
 ```bash
 npm install terrajs/
 ```
 
 ### Backend (Terra.py)
+
+* config.json & keys.json file needed
 
 * Shell commands
 ```bash

@@ -18,3 +18,5 @@ docker run --rm -v "$(pwd)":/code \
 # but unfortunately `terrain deploy` doesn't play nicely with repos that have
 # more than one contract.
 cp -r artifacts contracts/counter
+cp -r artifacts contracts/moats_token
+cp -r artifacts contracts/liquidproof
