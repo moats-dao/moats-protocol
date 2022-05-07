@@ -4,14 +4,14 @@
 
 ### Frontend (React)
 
-* Shell commands
+* Setup
 ```bash
 npm install
 ```
 
-### Backend (Cosmwasm)
+### Backend Smart Contract (Rust Cosmwasm)
 
-* Shell commands
+* Setup
 ```bash
 rustup default stable
 rustup target add wasm32-unknown-unknown
@@ -27,11 +27,20 @@ cargo test
 cargo build
 ```
 
-### Backend (Terra.js)
+* Deploy
+```bash
+cargo schema
+./build_optimized_wasm.sh
+pipenv shell
+./terrapy/upload-code.py
+./terrapy/create-contract.py
+```
+
+### Backend Test (Terra.js)
 
 * keys.terrain.js file needed
 
-* Shell commands
+* Setup
 ```bash
 npm install terrajs/
 ```
@@ -40,7 +49,7 @@ npm install terrajs/
 
 * config.json & keys.json file needed
 
-* Shell commands
+* Setup
 ```bash
 cd terrapy
 pipenv install --skip-lock --pre
