@@ -39,8 +39,8 @@ cargo schema
 cd terrapy
 pipenv shell
 cd ..
-./terrapy/upload-code.py
-./terrapy/create-contract.py
+python ./terrapy/liquidproof/upload-code.py
+python ./terrapy/liquidproof/create-contract.py
 ```
 
 <strike>
