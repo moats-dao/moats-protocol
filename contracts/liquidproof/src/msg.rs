@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use cosmwasm_std::{Addr, Uint256};
+use cosmwasm_std::{Addr, Uint128};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
@@ -19,8 +19,8 @@ pub enum ExecuteMsg {
 pub enum QueryMsg {
     GetOwner {},
     GetAdmin {},
-    // // GetUSTBalance returns the current UST balance as a json-encoded number
-    // GetUSTBalance {},
+    // GetUSTBalance returns the current UST balance as a json-encoded number
+    GetUSTBalance { account_addr: Addr },
 }
 
 // We define a custom struct for each query response

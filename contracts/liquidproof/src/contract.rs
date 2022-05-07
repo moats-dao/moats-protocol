@@ -2,7 +2,7 @@
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{
     to_binary, Addr, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
-    QueryRequest, BalanceResponse, BankQuery, Uint256,
+    QueryRequest, BalanceResponse, BankQuery, Uint128,
 };
 
 use cw2::set_contract_version;
@@ -72,15 +72,17 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::GetOwner {} => to_binary(&query_owner(deps)?),
         QueryMsg::GetAdmin {} =>  to_binary(&query_admin(deps)?),
+        //QueryMsg::GetUSTBalance{} => to_binary(&query_balance(deps, _env.contract.address, "uusd".to_string())?),
+        QueryMsg::GetUSTBalance { account_addr } => to_binary(&query_balance(deps, account_addr, "uusd".to_string())?),
     }
 }
 
-pub fn query_balance(deps: Deps, account_addr: Addr, denom: String) -> StdResult<Uint256> {
-    // load price form the oracle
+pub fn query_balance(deps: Deps, account_addr: Addr, denom: String) -> StdResult<Uint128> {
     let balance: BalanceResponse = deps.querier.query(&QueryRequest::Bank(BankQuery::Balance {
         address: account_addr.to_string(),
         denom,
     }))?;
+    println!("{}: {} {}", account_addr.to_string(), balance.amount.denom, balance.amount.amount.to_string());
     Ok(balance.amount.amount.into())
 }
 
@@ -91,52 +93,4 @@ fn query_owner(deps: Deps) -> StdResult<OwnerResponse> {
 
 fn query_admin(deps: Deps) -> StdResult<AdminResponse> {
     ADMIN.query_admin(deps)
-}
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
-    use cosmwasm_std::{coins, from_binary};
-
-    #[test]
-    fn proper_initialization() {
-        let mut deps = mock_dependencies(&[]);
-
-        let old_admin_addr = Addr::unchecked("admin");
-        let msg = InstantiateMsg { admin: "admin".to_string() };
-        //let info = mock_info("creator", &coins(1000, "earth"));
-        let info = mock_info("creator", &coins(2, "token"));
-        let sender = info.sender.clone();
-
-        // we can just call .unwrap() to assert this was a success
-        let res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
-        assert_eq!(0, res.messages.len());
-
-        // query the owner
-        let res = query(deps.as_ref(), mock_env(), QueryMsg::GetOwner {}).unwrap();
-        let value: OwnerResponse = from_binary(&res).unwrap();
-        assert_eq!(sender, value.owner);
-
-        // query the admin
-        let res = query(deps.as_ref(), mock_env(), QueryMsg::GetAdmin {}).unwrap();
-        let value: AdminResponse = from_binary(&res).unwrap();
-        assert_eq!(old_admin_addr.clone(), Addr::unchecked(value.admin.clone().unwrap()));
-
-        // update the admin
-        //let new_admin_addr = Addr::unchecked("admin2");
-        let new_admin_info =mock_info("admin2", &coins(2, "token"));
-        //let msg = ExecuteMsg::UpdateAdmin { new_admin: new_admin_addr.clone() };
-        let msg = ExecuteMsg::UpdateAdmin { new_admin: new_admin_info.sender.clone() };
-        //let admin_info = mock_info("admin", &coins(1000, "earth"));
-        let old_admin_info = mock_info("admin", &coins(2, "token"));
-        let res = execute(deps.as_mut(), mock_env(), old_admin_info.clone(), msg).unwrap();
-        assert_eq!(0, res.messages.len());
-
-        // query the admin
-        let res = query(deps.as_ref(), mock_env(), QueryMsg::GetAdmin {}).unwrap();
-        let value = from_binary::<AdminResponse>(&res).unwrap();
-        assert_eq!(new_admin_info.sender.clone(), Addr::unchecked(value.admin.clone().unwrap()));
-    }
 }
