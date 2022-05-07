@@ -25,14 +25,13 @@ terra = LCDClient(
     chain_id="bombay-12",
     gas_prices={ 'uluna': live_gas_prices['uluna'] },
     gas_adjustment="1.5")
-test1 = terra.wallet(MnemonicKey(mnemonic=walletMnemonics["testnetyk"]['mnemonic']))
+test1 = terra.wallet(MnemonicKey(mnemonic=walletMnemonics["mango_validator"]['mnemonic']))
 
 instantiate = MsgInstantiateContract(
     sender=test1.key.acc_address,
     admin=test1.key.acc_address,
     code_id=int(code_id),
-    init_msg={ "price": "23" },    # InitMsg
-    #{},    # InitMsg
+    init_msg={ "admin": test1.key.acc_address },    # InitMsg
     init_coins={}  # init coins
     #{"uluna": 1000000, "uusd": 1000000}  # init coins
 )

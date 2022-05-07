@@ -22,8 +22,8 @@ terra = LCDClient(
     chain_id="bombay-12",
     gas_prices={ 'uluna': live_gas_prices['uluna'] },
     gas_adjustment="1.5")
-test1 = terra.wallet(MnemonicKey(mnemonic=walletMnemonics["testnetyk"]['mnemonic']))
-contract_file = open("./artifacts/oracle.wasm", "rb")
+test1 = terra.wallet(MnemonicKey(mnemonic=walletMnemonics["mango_validator"]['mnemonic']))
+contract_file = open("./artifacts/liquidproof.wasm", "rb")
 file_bytes = base64.b64encode(contract_file.read()).decode()
 store_code = MsgStoreCode(test1.key.acc_address, file_bytes)
 store_code_tx = test1.create_and_sign_tx(CreateTxOptions(msgs=[store_code], fee=Fee(2100000, "60000uluna")))
