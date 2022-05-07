@@ -2,11 +2,16 @@
 
 ## Setup environment
 
-### Frontend (React)
+### Backend (Terra.py)
+
+* config.json & keys.json file needed
 
 * Setup
 ```bash
-npm install
+pip install --upgrade --pre pipenv
+cd terrapy
+pipenv install --skip-lock --pre
+pipenv shell
 ```
 
 ### Backend Smart Contract (Rust Cosmwasm)
@@ -31,11 +36,14 @@ cargo build
 ```bash
 cargo schema
 ./build_optimized_wasm.sh
+cd terrapy
 pipenv shell
+cd ..
 ./terrapy/upload-code.py
 ./terrapy/create-contract.py
 ```
 
+<strike>
 ### Backend Test (Terra.js)
 
 * keys.terrain.js file needed
@@ -45,13 +53,10 @@ pipenv shell
 npm install terrajs/
 ```
 
-### Backend (Terra.py)
-
-* config.json & keys.json file needed
+### Frontend (React)
 
 * Setup
 ```bash
-cd terrapy
-pipenv install --skip-lock --pre
-pipenv shell
+npm install
 ```
+</strike>
