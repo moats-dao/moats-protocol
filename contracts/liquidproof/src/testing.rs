@@ -15,13 +15,12 @@ use crate::msg::{OwnerResponse, ExecuteMsg, InstantiateMsg, QueryMsg};
 use crate::state::{ADMIN, HOOKS, State, STATE};
 
 use cosmwasm_std::testing::{
-    mock_dependencies, mock_env, mock_info, MockApi, MockStorage, MockQuerier, MOCK_CONTRACT_ADDR
+    mock_dependencies, mock_dependencies_with_balances, mock_env, mock_info,
+    MockApi, MockStorage, MockQuerier, MOCK_CONTRACT_ADDR
 };
-use cosmwasm_std::{coins, from_binary};
+use cosmwasm_std::{Coin, coins, from_binary};
 
-fn setup_test(info: &MessageInfo) -> OwnedDeps<MockStorage, MockApi, MockQuerier> {
-    let mut deps = mock_dependencies(&[]);
-
+fn setup_test(mut deps: OwnedDeps<MockStorage, MockApi, MockQuerier>, info: &MessageInfo) -> OwnedDeps<MockStorage, MockApi, MockQuerier> {
     let msg = InstantiateMsg {
         admin: "admin".to_string(),
         anc_liq_que_contract: "terra18j0wd0f62afcugw2rx5y8e6j5qjxd7d6qsc87r".to_string(),
@@ -32,21 +31,22 @@ fn setup_test(info: &MessageInfo) -> OwnedDeps<MockStorage, MockApi, MockQuerier
     // we can just call .unwrap() to assert this was a success
     let res = instantiate(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
     assert_eq!(0, res.messages.len());
-
+    
     deps
 }
 
 #[test]
 fn proper_initialization() {
+    let mut deps = mock_dependencies(&[]);
     let info = mock_info("creator", &coins(2, "token"));
-    let sender = info.sender.clone();
-    let mut deps = setup_test(&info);
+    deps = setup_test(deps, &info);
 
     let old_admin_addr = Addr::unchecked("admin");
 
     // query the owner
     let res = query(deps.as_ref(), mock_env(), QueryMsg::GetOwner {}).unwrap();
     let value: OwnerResponse = from_binary(&res).unwrap();
+    let sender = info.sender.clone();
     assert_eq!(sender, value.owner);
 
     // query the admin
@@ -72,14 +72,17 @@ fn proper_initialization() {
 
 #[test]
 fn balance_related() {
+    let mut deps = mock_dependencies_with_balances(
+        &[("creator", &[Coin { denom: "uusd".to_string(), amount: Uint128::from(99u128) }])]);
     let info = mock_info("creator", &coins(99, "uusd"));
+    deps = setup_test(deps, &info);
+
     let sender = info.sender.clone();
-    let mut deps = setup_test(&info);
     assert_eq!(info.funds, coins(99, "uusd"));
 
-    // // query the UST balance (NOT WORKING)
-    // let msg = QueryMsg::GetUstBalance { account_addr: sender };
-    // let res = query(deps.as_ref(), mock_env(), msg).unwrap();
-    // let bal: Uint128 = from_binary(&res).unwrap();
-    // assert_eq!(Uint128::from(99u128), bal);
+    // query the UST balance
+    let msg = QueryMsg::GetUstBalance { account_addr: sender };
+    let res = query(deps.as_ref(), mock_env(), msg).unwrap();
+    let bal: Uint128 = from_binary(&res).unwrap();
+    assert_eq!(Uint128::from(99u128), bal);
 }
