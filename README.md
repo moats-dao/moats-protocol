@@ -14,6 +14,15 @@ pipenv install --skip-lock --pre
 pipenv shell
 ```
 
+* Liquidation
+> check config.json
+```bash
+cd terrapy
+pipenv shell
+cd ..
+python ./terrapy/liquidproof/liquidation_sdk.py
+```
+
 ### Backend Smart Contract (Rust Cosmwasm)
 
 * Setup
@@ -25,7 +34,7 @@ cargo install cargo-run-script
 npm install @terra-money/terrain
 ```
 
-* Test
+* Test (mocking)
 ```bash
 cd contracts
 cargo test
@@ -33,6 +42,7 @@ cargo build
 ```
 
 * Deploy
+> check config.json
 ```bash
 cargo schema
 ./build_optimized_wasm.sh
@@ -41,6 +51,12 @@ pipenv shell
 cd ..
 python ./terrapy/liquidproof/upload-code.py
 python ./terrapy/liquidproof/create-contract.py
+```
+
+* Test (network)
+> check config.json
+```bash
+python ./terrapy/liquidproof/liquidation_contract.py
 ```
 
 <strike>

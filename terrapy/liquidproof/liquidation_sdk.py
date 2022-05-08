@@ -1,4 +1,5 @@
 from glob import glob
+from pickle import NONE
 from time import sleep
 from terra_sdk.client.lcd import LCDClient
 from terra_sdk.key.mnemonic import MnemonicKey
@@ -15,6 +16,7 @@ import base64
 
 MILLION = 1000000
 CHAIN_ID = None
+CHAIN_URL = None
 ANC_LIQ_QUE_CONTRACT = None
 BLUNA_CONTRACT = None
 ASTROPORT_ROUTER = None
@@ -29,25 +31,27 @@ class liquidation_module:
         with open("config.json", "r", encoding="utf-8") as read_file:
             config_dic = json.load(read_file)
 
-            if config_dic['network'] == "MAINNET":
-                CHAIN_ID = "columbus-5"
-                ANC_LIQ_QUE_CONTRACT = "terra1e25zllgag7j9xsun3me4stnye2pcg66234je3u"
-                BLUNA_CONTRACT = "terra1kc87mu460fwkqte29rquh4hc20m54fxwtsx7gp"
-                ASTROPORT_ROUTER = "terra16t7dpwwgx9n3lq6l6te3753lsjqwhxwpday9zx"
-            elif config_dic['network'] == "TESTNET":
-                CHAIN_ID = "bombay-12"
-                ANC_LIQ_QUE_CONTRACT = "terra18j0wd0f62afcugw2rx5y8e6j5qjxd7d6qsc87r"
-                BLUNA_CONTRACT = "terra1u0t35drzyy0mujj8rkdyzhe264uls4ug3wdp3x"
-                ASTROPORT_ROUTER = "terra13wf295fj9u209nknz2cgqmmna7ry3d3j5kv7t4"
-            else:
-                CHAIN_ID = "localterra"
+        if config_dic['network'] == "MAINNET":
+            CHAIN_ID = "columbus-5"
+            CHAIN_URL = "https://lcd.terra.dev"
+            ANC_LIQ_QUE_CONTRACT = "terra1e25zllgag7j9xsun3me4stnye2pcg66234je3u"
+            BLUNA_CONTRACT = "terra1kc87mu460fwkqte29rquh4hc20m54fxwtsx7gp"
+            ASTROPORT_ROUTER = "terra16t7dpwwgx9n3lq6l6te3753lsjqwhxwpday9zx"
+        elif config_dic['network'] == "TESTNET":
+            CHAIN_ID = "bombay-12"
+            CHAIN_URL = "https://bombay-lcd.terra.dev"
+            ANC_LIQ_QUE_CONTRACT = "terra18j0wd0f62afcugw2rx5y8e6j5qjxd7d6qsc87r"
+            BLUNA_CONTRACT = "terra1u0t35drzyy0mujj8rkdyzhe264uls4ug3wdp3x"
+            ASTROPORT_ROUTER = "terra13wf295fj9u209nknz2cgqmmna7ry3d3j5kv7t4"
+        else:
+            CHAIN_ID = "localterra"
 
-            self.terra = LCDClient(chain_id=CHAIN_ID, url="https://lcd.terra.dev")
+        self.terra = LCDClient(chain_id=CHAIN_ID, url=CHAIN_URL)
 
-            seed = config_dic['seed']
+        seed = config_dic['seed']
 
-            self.wallet = self.terra.wallet(MnemonicKey(mnemonic=seed))
-            self.account_address = self.wallet.key.acc_address
+        self.wallet = self.terra.wallet(MnemonicKey(mnemonic=seed))
+        self.account_address = self.wallet.key.acc_address
 
     def get_bLuna(self):
         query_msg_anchor_deposited = {

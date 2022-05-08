@@ -9,6 +9,8 @@ from terra_sdk.core.wasm import MsgStoreCode, MsgInstantiateContract, MsgExecute
 from terra_sdk.core.fee import Fee
 from terra_sdk.key.mnemonic import MnemonicKey
 
+MILLION = 1000000
+
 if __name__ == "__main__":
     url_request = Request("https://fcd.terra.dev/v1/txs/gas_prices", headers=    {"User-Agent": "Mozilla/5.0"})
     live_gas_prices = json.loads(urllib.request.urlopen(url_request).read().decode())
@@ -32,19 +34,17 @@ if __name__ == "__main__":
     else:
         CHAIN_ID = "localterra"
 
+    with open('contract_address.json') as f:
+        contract_address = json.load(f)
+
     terra = LCDClient(
         chain_id=CHAIN_ID, url=CHAIN_URL,
         gas_prices={ 'uluna': live_gas_prices['uluna'] },
         gas_adjustment="1.5")
     test1 = terra.wallet(MnemonicKey(mnemonic=config_dic['seed']))
-    contract_file = open("./artifacts/liquidproof.wasm", "rb")
-    file_bytes = base64.b64encode(contract_file.read()).decode()
-    store_code = MsgStoreCode(test1.key.acc_address, file_bytes)
-    store_code_tx = test1.create_and_sign_tx(CreateTxOptions(msgs=[store_code], fee=Fee(3100000, "60000uluna")))
-    store_code_tx_result = terra.tx.broadcast(store_code_tx)
-    print(store_code_tx_result)
 
-    code_id = store_code_tx_result.logs[0].events_by_type["store_code"]["code_id"][0]
+    UST_balance = terra.bank.balance(address=test1.key.acc_address)
+    print(int(UST_balance[0]['uusd'].amount))
 
-    with open('code_id.json', 'w') as f:
-        json.dump(code_id, f)
+    result = terra.wasm.contract_query(contract_address, {"get_ust_balance": { "account_addr": test1.key.acc_address }})
+    print(result)
