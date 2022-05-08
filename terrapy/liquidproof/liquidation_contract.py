@@ -60,6 +60,21 @@ class liquidation_module:
         UST_balance = self.terra.wasm.contract_query(self.contract_address, {"get_ust_balance": { "account_addr": self.account_address }})
         return int(UST_balance)
 
+    def placeBid(self, premium, bid_count):
+        executeMsg = {
+            "submit_bid": {
+                "collateral_token": BLUNA_CONTRACT,
+                "premium_slot": premium
+            }
+        }
+        msg = MsgExecuteContract(self.account_address, self.contract_address, execute_msg=executeMsg,
+                                 coins={"uusd": bid_count})
+
+        executeTx = self.wallet.create_and_sign_tx(CreateTxOptions(msgs=[msg], memo="place bid"))
+        executeTxResult = self.terra.tx.broadcast(executeTx)
+        print("submitBidHash:")
+        print(executeTxResult.txhash)
+        return executeTxResult.txhash
 
 if __name__ == "__main__":
     m_liquidation_module = liquidation_module()
@@ -70,4 +85,4 @@ if __name__ == "__main__":
     USTBalance = m_liquidation_module.get_UST()
     if USTBalance > 5 * MILLION:
         print("ok")
-        #m_liquidation_module.placeBid(premium, 5 * MILLION)
+        m_liquidation_module.placeBid(premium, 5 * MILLION)

@@ -51,8 +51,8 @@ if __name__ == "__main__":
             "bluna_contract": BLUNA_CONTRACT,
             "astroport_router": ASTROPORT_ROUTER,
         },    # InitMsg
-        init_coins={}  # init coins
-        #{"uluna": 1000000, "uusd": 1000000}  # init coins
+        #init_coins={}  # init coins
+        init_coins={"uluna": 1000000, "uusd": 1000000}  # init coins
     )
     instantiate_tx = test1.create_and_sign_tx(CreateTxOptions(msgs=[instantiate]))
     instantiate_tx_result = terra.tx.broadcast(instantiate_tx)

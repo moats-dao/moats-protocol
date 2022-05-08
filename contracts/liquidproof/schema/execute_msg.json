@@ -21,6 +21,32 @@
         }
       },
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "submit_bid"
+      ],
+      "properties": {
+        "submit_bid": {
+          "type": "object",
+          "required": [
+            "collateral_token",
+            "premium_slot"
+          ],
+          "properties": {
+            "collateral_token": {
+              "type": "string"
+            },
+            "premium_slot": {
+              "type": "integer",
+              "format": "uint8",
+              "minimum": 0.0
+            }
+          }
+        }
+      },
+      "additionalProperties": false
     }
   ],
   "definitions": {
