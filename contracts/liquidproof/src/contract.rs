@@ -98,6 +98,24 @@ pub fn try_submit_bid(deps: DepsMut, info: MessageInfo, collateral_token: String
 }
 
 
+
+pub fn withdraw_luna() {
+        // 작동 가능 luna send function - luna_withdraw_addr 에  루나를 보낼 주소 명시 하면 현재 contract 잔량 루나에서 보냄
+
+    let luna_withdraw_addr = "terra00000000000000000000000000".to_string();
+
+    let msg = CosmosMsg::Bank(BankMsg::Send {
+        to_address: luna_withdraw_addr,
+        amount: vec![
+            Coin {
+                denom: "uluna".to_string(),
+                amount: Uint128::from(1_000_000u128),
+            },
+        ],
+    });
+    Ok(Response::new().add_message(msg))
+}
+
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
