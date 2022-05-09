@@ -16,7 +16,8 @@ pub struct InstantiateMsg {
 pub enum ExecuteMsg {
     UpdateAdmin { new_admin: Addr },
     SubmitBid { collateral_token: String, premium_slot: u8 },
-    ClaimLiquidations { collateral_token: String, bids_idx: Option<Vec<Uint128>> }
+    ClaimLiquidations { collateral_token: String, bids_idx: Option<Vec<Uint128>> },
+    ActivateBids { collateral_token: String, bids_idx: Option<Vec<Uint128>> },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

@@ -59,8 +59,31 @@ pub fn execute(
         ExecuteMsg::UpdateAdmin { new_admin } => try_update_admin(deps, info, new_admin),
         ExecuteMsg::SubmitBid { collateral_token, premium_slot } => try_submit_bid(deps, info, collateral_token, premium_slot),
         ExecuteMsg::ClaimLiquidations { collateral_token, bids_idx } => try_claim_liquidation(deps, info, collateral_token, bids_idx),
+        ExecuteMsg::ActivateBids { collateral_token, bids_idx } => try_activate_bid(deps, info, collateral_token, bids_idx),
     }
 }
+
+pub fn try_activate_bid(deps: DepsMut, info: MessageInfo, collateral_token: String, bids_idx: Option<Vec<Uint128>>) -> Result<Response, ContractError> {
+    let api = deps.api;
+    let result = api.addr_validate(&collateral_token.as_str());
+    if let Err(_e) = &result {
+        return Err(ContractError::ArgumentError {});
+    }
+
+    let state = STATE.load(deps.storage)?;
+
+    Ok(Response::new()
+    .add_messages(vec![CosmosMsg::Wasm(
+        WasmMsg::Execute {
+            contract_addr: String::from(state.anc_liq_que_contract),
+            msg: to_binary(&AncLiqQueExecuteMsg::ActivateBids {
+                collateral_token: collateral_token, bids_idx: bids_idx
+            }).unwrap(),
+            funds: vec![], 
+    })])
+    .add_attribute("action", "activate bid"))
+}
+
 
 pub fn try_update_admin(deps: DepsMut, info: MessageInfo, new_admin: Addr) -> Result<Response, ContractError> {
     let api = deps.api;
@@ -114,7 +137,7 @@ pub fn try_claim_liquidation(deps: DepsMut, info: MessageInfo, collateral_token:
             msg: to_binary(&AncLiqQueExecuteMsg::ClaimLiquidations {
                 collateral_token: collateral_token, bids_idx: bids_idx
             }).unwrap(),
-            funds: vec![],
+            funds: vec![], 
     })])
     .add_attribute("action", "claim liquidation"))
 }
@@ -136,6 +159,8 @@ pub fn withdraw_luna() -> Result<Response, ContractError>{
 
     Ok(Response::new().add_message(msg))
 }
+
+
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
