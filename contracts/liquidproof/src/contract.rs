@@ -145,22 +145,28 @@ pub fn try_claim_liquidation(deps: DepsMut, info: MessageInfo, collateral_token:
     .add_attribute("action", "claim liquidation"))
 }
 
-pub fn withdraw_luna() -> Result<Response, ContractError>{
-    // function for withdrawing Luna from contract balance to specified address/wallet
+pub fn withdraw_bluna() -> Result<Response, ContractError>{
+    // function for withdrawing bLuna from contract balance to specified address/wallet
 
-    let luna_withdraw_addr = "terra00000000000000000000000000".to_string();
+    let token_addr = "terra1u0t35drzyy0mujj8rkdyzhe264uls4ug3wdp3x".to_string(); // https://terrasco.pe/testnet/address/terra1u0t35drzyy0mujj8rkdyzhe264uls4ug3wdp3x
 
-    let msg = CosmosMsg::Bank(BankMsg::Send {
-        to_address: luna_withdraw_addr,
-        amount: vec![
-            Coin {
-                denom: "uluna".to_string(),
-                amount: Uint128::from(1_000_000u128),
-            },
-        ],
-    });
+    let bluna_withdraw_addr = "terra00000000000000000000000000".to_string();
 
-    Ok(Response::new().add_message(msg))
+    let msg = Cw20ExecuteMsg::Transfer {
+        recipient: bluna_withdraw_addr,
+        amount: Uint128::from(10_000_000u128),
+    };
+
+    Ok(
+        Response::new()
+        .add_message(
+            CosmosMsg::Wasm(WasmMsg::Execute {
+            contract_addr: token_addr,
+            msg: to_binary(&msg)?,
+            funds: vec![],
+            })
+        )
+    )
 }
 
 
