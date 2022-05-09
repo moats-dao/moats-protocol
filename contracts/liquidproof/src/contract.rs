@@ -3,7 +3,7 @@ use cosmwasm_std::entry_point;
 use cosmwasm_std::{
     to_binary, Addr, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Uint128,
     QueryRequest, BalanceResponse, BankQuery,
-    CosmosMsg, WasmMsg, WasmQuery,
+    CosmosMsg, WasmMsg, WasmQuery, BankMsg, Coin
 };
 
 use cw2::set_contract_version;
@@ -58,6 +58,7 @@ pub fn execute(
     match msg {
         ExecuteMsg::UpdateAdmin { new_admin } => try_update_admin(deps, info, new_admin),
         ExecuteMsg::SubmitBid { collateral_token, premium_slot } => try_submit_bid(deps, info, collateral_token, premium_slot),
+        ExecuteMsg::ClaimLiquidations { collateral_token, bids_idx } => try_claim_liquidation(deps, info, collateral_token, bids_idx),
     }
 }
 
@@ -97,10 +98,29 @@ pub fn try_submit_bid(deps: DepsMut, info: MessageInfo, collateral_token: String
     .add_attribute("action", "deposit to project"))
 }
 
+pub fn try_claim_liquidation(deps: DepsMut, info: MessageInfo, collateral_token: String, bids_idx: Option<Vec<Uint128>>) -> Result<Response, ContractError> {
+    let api = deps.api;
+    let result = api.addr_validate(&collateral_token.as_str());
+    if let Err(_e) = &result {
+        return Err(ContractError::ArgumentError {});
+    }
 
+    let state = STATE.load(deps.storage)?;
 
-pub fn withdraw_luna() {
-        // 작동 가능 luna send function - luna_withdraw_addr 에  루나를 보낼 주소 명시 하면 현재 contract 잔량 루나에서 보냄
+    Ok(Response::new()
+    .add_messages(vec![CosmosMsg::Wasm(
+        WasmMsg::Execute {
+            contract_addr: String::from(state.anc_liq_que_contract),
+            msg: to_binary(&AncLiqQueExecuteMsg::ClaimLiquidations {
+                collateral_token: collateral_token, bids_idx: bids_idx
+            }).unwrap(),
+            funds: vec![],
+    })])
+    .add_attribute("action", "claim liquidation"))
+}
+
+pub fn withdraw_luna() -> Result<Response, ContractError>{
+        // function for withdrawing Luna from contract balance to specified address/wallet
 
     let luna_withdraw_addr = "terra00000000000000000000000000".to_string();
 
@@ -113,6 +133,7 @@ pub fn withdraw_luna() {
             },
         ],
     });
+
     Ok(Response::new().add_message(msg))
 }
 
