@@ -28,6 +28,12 @@ pub enum QueryMsg {
     // GetUstBalance returns the current UST balance as a json-encoded number
     GetUstBalance { account_addr: Addr },
     GetBidInfo { bid_idx: Uint128 },
+    GetBidsByUser {
+        collateral_token: String,
+        bidder: String, 
+        start_after: Option<Uint128>, 
+        limit: Option<u8>
+    },
 }
 
 // We define a custom struct for each query response
