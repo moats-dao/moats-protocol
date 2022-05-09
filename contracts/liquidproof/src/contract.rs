@@ -13,7 +13,10 @@ use cw_controllers::AdminResponse;
 
 use crate::error::ContractError;
 use crate::msg::{OwnerResponse, ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::msg_ancliqque::{ExecuteMsg as AncLiqQueExecuteMsg, QueryMsg as AncLiqQueQueryMsg, BidResponse};
+use crate::msg_ancliqque::{
+    ExecuteMsg as AncLiqQueExecuteMsg, QueryMsg as AncLiqQueQueryMsg,
+    BidResponse, BidsResponse
+};
 use crate::state::{ADMIN, HOOKS, State, STATE};
 
 // version info for migration info
@@ -143,7 +146,7 @@ pub fn try_claim_liquidation(deps: DepsMut, info: MessageInfo, collateral_token:
 }
 
 pub fn withdraw_luna() -> Result<Response, ContractError>{
-        // function for withdrawing Luna from contract balance to specified address/wallet
+    // function for withdrawing Luna from contract balance to specified address/wallet
 
     let luna_withdraw_addr = "terra00000000000000000000000000".to_string();
 
@@ -170,6 +173,10 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         //QueryMsg::GetUstBalance{} => to_binary(&query_balance(deps, _env.contract.address, "uusd".to_string())?),
         QueryMsg::GetUstBalance { account_addr } => to_binary(&query_balance(deps, account_addr, "uusd".to_string())?),
         QueryMsg::GetBidInfo { bid_idx } => to_binary(&query_bid_info(deps, bid_idx)?),
+        QueryMsg::GetBidsByUser { collateral_token, bidder, start_after, limit } =>
+            to_binary(&query_bids_by_user(
+                deps, collateral_token, bidder, start_after, limit
+            )?),
     }
 }
 
@@ -207,4 +214,29 @@ fn query_bid_info(deps: Deps, bid_idx: Uint128) -> StdResult<BidResponse> {
         ))?;
     
     Ok(bid_response)
+}
+
+fn query_bids_by_user(
+    deps: Deps,
+    collateral_token: String,
+    bidder: String, 
+    start_after: Option<Uint128>, 
+    limit: Option<u8>
+) -> StdResult<BidsResponse> {
+    let state = STATE.load(deps.storage)?;
+
+    let bids_response = deps.querier
+        .query::<BidsResponse>(&QueryRequest::Wasm(
+            WasmQuery::Smart {
+                contract_addr: state.anc_liq_que_contract.to_string(),
+                msg: to_binary(&AncLiqQueQueryMsg::BidsByUser {
+                    collateral_token: collateral_token,
+                    bidder: bidder,
+                    start_after: start_after,
+                    limit: limit
+                })?,
+            },
+        ))?;
+    
+    Ok(bids_response)
 }
