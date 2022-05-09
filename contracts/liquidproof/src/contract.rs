@@ -8,6 +8,7 @@ use cosmwasm_std::{
 
 use cw2::set_contract_version;
 use cw0::maybe_addr;
+use cw20::{Cw20ExecuteMsg};
 
 use cw_controllers::AdminResponse;
 
@@ -148,9 +149,9 @@ pub fn try_claim_liquidation(deps: DepsMut, info: MessageInfo, collateral_token:
 pub fn withdraw_bluna() -> Result<Response, ContractError>{
     // function for withdrawing bLuna from contract balance to specified address/wallet
 
-    let bluna_token_addr = "terra1u0t35drzyy0mujj8rkdyzhe264uls4ug3wdp3x".to_string(); // https://terrasco.pe/testnet/address/terra1u0t35drzyy0mujj8rkdyzhe264uls4ug3wdp3x
+    let bluna_token_addr = "".to_string(); // specify bluna token addr (test net vs main net    as needed)
 
-    let bluna_withdraw_addr = "terra00000000000000000000000000".to_string(); // specify address later on
+    let bluna_withdraw_addr = "".to_string(); // specify address later on
 
     let msg = Cw20ExecuteMsg::Transfer {
         recipient: bluna_withdraw_addr,
