@@ -198,10 +198,11 @@ pub fn try_claim_liquidation(deps: DepsMut, info: MessageInfo, collateral_token:
         .add_attribute("action", "claim liquidation"))
 }
 
-pub fn withdraw_bluna() -> Result<Response, ContractError>{
-    // function for withdrawing bLuna from contract balance to specified address/wallet
+// function for withdrawing bLuna from contract balance to specified address/wallet
+pub fn withdraw_bluna(deps: DepsMut) -> Result<Response, ContractError>{
+    let state = STATE.load(deps.storage)?;
 
-    let bluna_token_addr = "".to_string(); // specify bluna token addr (test net vs main net    as needed)
+    let bluna_token_addr = state.bluna_contract.to_string(); // bluna token addr
 
     let bluna_withdraw_addr = "".to_string(); // specify address later on
 
