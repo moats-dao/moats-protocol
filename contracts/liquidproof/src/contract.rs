@@ -232,7 +232,7 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
             )?),
         QueryMsg::GetBidsByUser { collateral_token, bidder, start_after, limit } =>
             to_binary(&query_bids_by_user(
-                deps, collateral_token, bidder, start_after, limit
+                deps, env, collateral_token, bidder, start_after, limit
             )?),
     }
 }
@@ -324,21 +324,20 @@ fn query_bids_by_user(
 
     let safe_bidder = deps.api.addr_validate(&bidder)?;
 
-    let bids_response = query_bids_by_contract(deps, env, collateral_token, start_after, limit)?;
+    let bids_response = query_bids_by_contract(deps, env, collateral_token.clone(), start_after, limit)?;
 
     let key = (collateral_token.clone(), &safe_bidder);
     if BID_INDICES_MAP.has(deps.storage, key.clone()) {
         let bid_indices = BID_INDICES_MAP.load(deps.storage, key.clone())?;
-        let bids_response_by_user = bid_indices.iter().map(|bid_idx| bid_idx)
+        let mut bids_by_user : Vec<BidResponse> = vec![];
+        for bid_response in bids_response.bids.iter() {
+            if bid_indices.contains(&bid_response.idx) {
+                bids_by_user.push(bid_response.clone());
+            }
+        }
 
-        Ok(bids_response_by_user)
+        Ok(BidsResponse { bids: bids_by_user })
     } else {
-        BID_INDICES_MAP.save(
-            deps.storage,
-            key,
-            &vec![*last_bid_idx],
-        )?;
-
-        Ok(bids_response)
+        Ok(BidsResponse { bids: vec![] })
     }
 }
