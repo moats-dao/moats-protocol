@@ -8,6 +8,7 @@ use cosmwasm_std::{
 
 use cw2::set_contract_version;
 use cw0::maybe_addr;
+use cw20::{Cw20ExecuteMsg};
 
 use cw_controllers::AdminResponse;
 use schemars::_serde_json::de;
@@ -197,22 +198,28 @@ pub fn try_claim_liquidation(deps: DepsMut, info: MessageInfo, collateral_token:
         .add_attribute("action", "claim liquidation"))
 }
 
-pub fn withdraw_luna() -> Result<Response, ContractError>{
-    // function for withdrawing Luna from contract balance to specified address/wallet
+pub fn withdraw_bluna() -> Result<Response, ContractError>{
+    // function for withdrawing bLuna from contract balance to specified address/wallet
 
-    let luna_withdraw_addr = "terra00000000000000000000000000".to_string();
+    let bluna_token_addr = "".to_string(); // specify bluna token addr (test net vs main net    as needed)
 
-    let msg = CosmosMsg::Bank(BankMsg::Send {
-        to_address: luna_withdraw_addr,
-        amount: vec![
-            Coin {
-                denom: "uluna".to_string(),
-                amount: Uint128::from(1_000_000u128),
-            },
-        ],
-    });
+    let bluna_withdraw_addr = "".to_string(); // specify address later on
 
-    Ok(Response::new().add_message(msg))
+    let msg = Cw20ExecuteMsg::Transfer {
+        recipient: bluna_withdraw_addr,
+        amount: Uint128::from(10_000_000u128), // specify amount later on
+    };
+
+    Ok(
+        Response::new()
+        .add_message(
+            CosmosMsg::Wasm(WasmMsg::Execute {
+            contract_addr: bluna_token_addr,
+            msg: to_binary(&msg)?,
+            funds: vec![],
+            })
+        )
+    )
 }
 
 
