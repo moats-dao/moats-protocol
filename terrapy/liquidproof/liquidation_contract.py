@@ -138,12 +138,12 @@ if __name__ == "__main__":
     m_liquidation_module = liquidation_module()
     premium = 1
 
-    # 엥커 bLuna 리퀴데이션 큐에 Submit Bid on
-    # Submit Bid on 이상 없으면 Activate Bids on
-    USTBalance = m_liquidation_module.get_UST()
-    if USTBalance > 5 * MILLION:
-        print("placing bid")
-        m_liquidation_module.placeBid(premium, 5 * MILLION)
+    # # 엥커 bLuna 리퀴데이션 큐에 Submit Bid on
+    # # Submit Bid on 이상 없으면 Activate Bids on
+    # USTBalance = m_liquidation_module.get_UST()
+    # if USTBalance > 5 * MILLION:
+    #     print("placing bid")
+    #     m_liquidation_module.placeBid(premium, 5 * MILLION)∂
 
     # 지켜보고 있다가 bLuna가 해당 프리미엄에 받아지면 Claim
     while True:

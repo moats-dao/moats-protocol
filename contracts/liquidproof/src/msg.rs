@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use cosmwasm_std::{Addr, Uint128};
+use cosmwasm_std::{Addr, Uint128, Uint256};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
@@ -16,6 +16,7 @@ pub struct InstantiateMsg {
 pub enum ExecuteMsg {
     UpdateAdmin { new_admin: Addr },
     SubmitBid { collateral_token: String, premium_slot: u8 },
+    RetractBid { bid_idx: Uint128, amount: Option<Uint256> },
     ClaimLiquidations { collateral_token: String, bids_idx: Option<Vec<Uint128>> },
     ActivateBids { collateral_token: String, bids_idx: Option<Vec<Uint128>> },
 }
@@ -27,7 +28,13 @@ pub enum QueryMsg {
     GetAdmin {},
     // GetUstBalance returns the current UST balance as a json-encoded number
     GetUstBalance { account_addr: Addr },
+    GetConfig {},
     GetBidInfo { bid_idx: Uint128 },
+    GetBidsByContract {
+        collateral_token: String,
+        start_after: Option<Uint128>, 
+        limit: Option<u8>
+    },
     GetBidsByUser {
         collateral_token: String,
         bidder: String, 

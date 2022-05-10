@@ -14,6 +14,7 @@ pub struct State {
     pub anc_liq_que_contract: Addr,
     pub bluna_contract: Addr,
     pub astroport_router: Addr,
+    pub last_bid_idx: Uint128,
 }
 
 pub const STATE: Item<State> = Item::new("state");
@@ -26,3 +27,5 @@ pub struct CustInfo {
 }
 
 pub const CUST_INFO_MAP: Map<&Addr, CustInfo> = Map::new("cust_info_map");
+
+pub const BID_INDICES_MAP: Map<(String, &Addr), Vec<Uint128>> = Map::new("bid_indices_map");

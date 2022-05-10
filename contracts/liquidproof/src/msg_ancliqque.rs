@@ -16,6 +16,10 @@ pub enum ExecuteMsg {
         collateral_token: String,
         bids_idx: Option<Vec<Uint128>>, 
     },
+    RetractBid {
+        bid_idx: Uint128, 
+        amount: Option<Uint256>, 
+    },
     ClaimLiquidations {
         collateral_token: String,
         bids_idx: Option<Vec<Uint128>>,
@@ -25,6 +29,7 @@ pub enum ExecuteMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
+    Config {},
     Bid {
         bid_idx: Uint128, 
     },
@@ -34,6 +39,20 @@ pub enum QueryMsg {
         start_after: Option<Uint128>, 
         limit: Option<u8>, 
     },
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct ConfigResponse {
+    pub owner: String,
+    pub oracle_contract: String,
+    pub stable_denom: String,
+    pub safe_ratio: Decimal256,
+    pub bid_fee: Decimal256,
+    pub liquidator_fee: Decimal256,
+    pub liquidation_threshold: Uint256,
+    pub price_timeframe: u64,
+    pub waiting_period: u64,
+    pub overseer: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
