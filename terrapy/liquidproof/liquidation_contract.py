@@ -92,7 +92,7 @@ class liquidation_module:
         msg = {
             "get_bids_by_user": {
                 "collateral_token": BLUNA_CONTRACT,
-                "bidder": self.contract_address,
+                "bidder": self.account_address,
                 "start_after": "123",
                 "limit": 30
             }
